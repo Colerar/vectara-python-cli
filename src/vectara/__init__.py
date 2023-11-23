@@ -131,7 +131,7 @@ class vectara():
             print (response.json())
             return None
 
-    def reset_corpus(self, corpus_id: int):
+    def reset_corpus(self, corpus_id: int) -> bool:
         """Create a corpus given the corpus_name and corpus_description
 
         params:
@@ -159,11 +159,12 @@ class vectara():
 
         if response.status_code == 200:
             print (f"Resetting corpus {corpus_id} successful. ")
+            return True
         else:
             print (f"Failed resetting corpus {corpus_id}. ")
             print (response.json())
+            return False
 
-        return None
 
     def upload(self, corpus_id: int, source: str | List[str], description: str | List[str] = "", verbose: bool = False):
         """Upload a file, a list of files, or files in a folder, to a corpus specified by corpus_id
@@ -187,7 +188,7 @@ class vectara():
         else:
             print ("Invalid source. ")
 
-    def upload_file(self, corpus_id: int, filepath: str, description: str= "", verbose: bool = False):
+    def upload_file(self, corpus_id: int, filepath: str, description: str= "", verbose: bool = False) -> bool:
         """Upload a file from local storage to a corpus specified by corpus_id
 
         params:
@@ -232,7 +233,7 @@ class vectara():
                 print ("Failed. ")
                 print (response.json())
 
-        return None
+        return response.status_code == 200
 
     def upload_files(self, corpus_id, filepaths: List[str], descriptions: List[str] = [], verbose: bool= False):
         """Upload a list of files from local storage
@@ -318,7 +319,7 @@ class vectara():
         else:
             print ("Query successful. ")
             if self.from_cli:
-                simple_json = post_process_query_result(response.json(), format='simple_json')
+                simple_json = post_process_query_result(response.json(), format='json')
                 print (json.dumps(simple_json, indent=2))
             else:
                 return response.json()
@@ -369,7 +370,7 @@ f"""
 """
 
 
-    format = format.lower()    
+    format = format.lower()
 
     if format == 'markdown':
         if jupyter_display:
@@ -377,7 +378,7 @@ f"""
             display_markdown(md_obj)
         return md
     elif format == 'json':
-        md = '```json\n' + json.dumps(simple_result, indent=2) + "\n```" 
+        md = '```json\n' + json.dumps(simple_result, indent=2) + "\n```"
         if jupyter_display:
             display_markdown(Markdown(md))
         return json.dumps(md, indent=2)

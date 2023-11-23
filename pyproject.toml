@@ -17,6 +17,7 @@ dependencies = [
     "tqdm",
     "IPython",
     "fire",
+    "funix",
 ]
 
 [build-system]
