@@ -1,19 +1,17 @@
+import tempfile
+
 from funix import funix
 from funix.hint import Markdown, BytesFile
-from funix.session import set_default_global_variable, set_global_variable, get_global_variable
-import tempfile
+from funix.session import set_default_global_variable
 
 from vectara import vectara, post_process_query_result
 
-set_default_global_variable("vectara_client", None)
-
+vectara_client: vectara | None = None
 
 def __get_vectara_client() -> vectara:
-    result = get_global_variable("vectara_client")
-    if result is None:
+    if vectara_client is None:
         raise Exception("Vectara client not set. Please run set_api first.")
-    else:
-        return result
+    return vectara_client
 
 
 @funix()
@@ -22,7 +20,8 @@ def set_api(
     client_id: str,
     client_secret: str,
 ):
-    set_global_variable("vectara_client", vectara(customer_id, client_id, client_secret, from_cli=False))
+    global vectara_client
+    vectara_client = vectara(customer_id, client_id, client_secret, from_cli=False)
 
 
 @funix()
